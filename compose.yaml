@@ -1,0 +1,72 @@
+# see https://jfrog.com/help/r/jfrog-release-information/artifactory-release-notes
+# see https://jfrog.com/community/download-artifactory-oss/
+# see templates/docker-compose-volumes.yaml in the downloaded file from the previous link.
+# see docker compose exec -u root artifactory bash -c 'cat /var/opt/jfrog/artifactory/log/tomcat/tomcat-*.log'
+services:
+  artifactory:
+    image: releases-docker.jfrog.io/jfrog/artifactory-oss:7.104.15
+    ports:
+      - 8082:8082
+    environment:
+      - ENABLE_MIGRATION=y
+      - JF_SHARED_DATABASE_TYPE=postgresql
+      - JF_SHARED_DATABASE_USERNAME=artifactory
+      - JF_SHARED_DATABASE_PASSWORD=password
+      - JF_SHARED_DATABASE_URL=jdbc:postgresql://postgres:5432/artifactory
+      - JF_SHARED_DATABASE_DRIVER=org.postgresql.Driver
+      - JF_ROUTER_ENTRYPOINTS_EXTERNALPORT=8082
+    volumes:
+      - artifactory_data:/var/opt/jfrog/artifactory
+      - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8082/artifactory/api/system/ping || exit 1"]
+      start_interval: 1m
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+  postgres:
+    # see https://hub.docker.com/_/postgres
+    # see https://github.com/docker-library/postgres/tree/master/17/bookworm
+    image: postgres:17.4-bookworm
+    environment:
+      - POSTGRES_DB=artifactory
+      - POSTGRES_USER=artifactory
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U artifactory"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: on-failure
+  init:
+    build: init
+    depends_on:
+      artifactory:
+        condition: service_healthy
+    volumes:
+      - ./init:/init:ro
+      - /etc/localtime:/etc/localtime:ro
+  wait:
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    build: init
+    command: ["true"]
+  tests:
+    profiles:
+      - test
+    build: init
+    command: ["python3", "/init/artifactory_encode_props_tests.py"]
+    volumes:
+      - ./init:/init:ro
+      - /etc/localtime:/etc/localtime:ro
+volumes:
+  artifactory_data:
+  postgres_data:
