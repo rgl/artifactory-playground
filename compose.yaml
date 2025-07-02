@@ -4,7 +4,7 @@
 # see docker compose exec -u root artifactory bash -c 'cat /var/opt/jfrog/artifactory/log/tomcat/tomcat-*.log'
 services:
   artifactory:
-    image: releases-docker.jfrog.io/jfrog/artifactory-oss:7.111.9
+    image: releases-docker.jfrog.io/jfrog/artifactory-oss:7.111.10
     ports:
       - 8082:8082
     environment:
