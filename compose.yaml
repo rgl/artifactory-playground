@@ -4,7 +4,7 @@
 # see docker compose exec -u root artifactory bash -c 'cat /var/opt/jfrog/artifactory/log/tomcat/tomcat-*.log'
 services:
   artifactory:
-    image: releases-docker.jfrog.io/jfrog/artifactory-oss:7.111.10
+    image: releases-docker.jfrog.io/jfrog/artifactory-oss:7.117.14
     ports:
       - 8082:8082
     environment:
@@ -15,9 +15,10 @@ services:
       - JF_SHARED_DATABASE_URL=jdbc:postgresql://postgres:5432/artifactory
       - JF_SHARED_DATABASE_DRIVER=org.postgresql.Driver
       - JF_ROUTER_ENTRYPOINTS_EXTERNALPORT=8082
+      - TZ=Europe/Lisbon
     volumes:
       - artifactory_data:/var/opt/jfrog/artifactory
-      - /etc/localtime:/etc/localtime:ro
+      - /usr/share/zoneinfo/Europe/Lisbon:/etc/localtime:ro
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8082/artifactory/api/system/ping || exit 1"]
       start_period: 3m
@@ -32,14 +33,15 @@ services:
   postgres:
     # see https://hub.docker.com/_/postgres
     # see https://github.com/docker-library/postgres/tree/master/17/bookworm
-    image: postgres:17.5-bookworm
+    image: postgres:17.6-trixie
     environment:
       - POSTGRES_DB=artifactory
       - POSTGRES_USER=artifactory
       - POSTGRES_PASSWORD=password
+      - TZ=Europe/Lisbon
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - /etc/localtime:/etc/localtime:ro
+      - /usr/share/zoneinfo/Europe/Lisbon:/etc/localtime:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U artifactory"]
       start_period: 1m
@@ -53,9 +55,11 @@ services:
     depends_on:
       artifactory:
         condition: service_healthy
+    environment:
+      - TZ=Europe/Lisbon
     volumes:
       - ./init:/init:ro
-      - /etc/localtime:/etc/localtime:ro
+      - /usr/share/zoneinfo/Europe/Lisbon:/etc/localtime:ro
   wait:
     depends_on:
       init:
@@ -67,9 +71,11 @@ services:
       - test
     build: init
     command: ["python3", "/init/artifactory_encode_props_tests.py"]
+    environment:
+      - TZ=Europe/Lisbon
     volumes:
       - ./init:/init:ro
-      - /etc/localtime:/etc/localtime:ro
+      - /usr/share/zoneinfo/Europe/Lisbon:/etc/localtime:ro
 volumes:
   artifactory_data:
   postgres_data:
