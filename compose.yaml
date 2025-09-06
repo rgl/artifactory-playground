@@ -4,7 +4,7 @@
 # see docker compose exec -u root artifactory bash -c 'cat /var/opt/jfrog/artifactory/log/tomcat/tomcat-*.log'
 services:
   artifactory:
-    image: releases-docker.jfrog.io/jfrog/artifactory-oss:7.117.14
+    image: releases-docker.jfrog.io/jfrog/artifactory-oss:7.117.15
     ports:
       - 8082:8082
     environment:
@@ -32,7 +32,7 @@ services:
         condition: service_healthy
   postgres:
     # see https://hub.docker.com/_/postgres
-    # see https://github.com/docker-library/postgres/tree/master/17/bookworm
+    # see https://github.com/docker-library/postgres/tree/master/17/trixie
     image: postgres:17.6-trixie
     environment:
       - POSTGRES_DB=artifactory
