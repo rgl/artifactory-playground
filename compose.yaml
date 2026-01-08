@@ -1,10 +1,11 @@
 # see https://jfrog.com/help/r/jfrog-release-information/artifactory-release-notes
+# see https://jfrog.com/help/r/jfrog-release-information/artifactory-self-hosted-releases
 # see https://jfrog.com/community/download-artifactory-oss/
 # see templates/docker-compose-volumes.yaml in the downloaded file from the previous link.
 # see docker compose exec -u root artifactory bash -c 'cat /var/opt/jfrog/artifactory/log/tomcat/tomcat-*.log'
 services:
   artifactory:
-    image: releases-docker.jfrog.io/jfrog/artifactory-oss:7.117.16
+    image: releases-docker.jfrog.io/jfrog/artifactory-oss:7.117.19
     ports:
       - 8082:8082
     environment:
@@ -33,7 +34,7 @@ services:
   postgres:
     # see https://hub.docker.com/_/postgres
     # see https://github.com/docker-library/postgres/tree/master/17/trixie
-    image: postgres:17.6-trixie
+    image: postgres:17.7-trixie
     environment:
       - POSTGRES_DB=artifactory
       - POSTGRES_USER=artifactory
