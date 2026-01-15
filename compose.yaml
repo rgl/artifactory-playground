@@ -5,11 +5,12 @@
 # see docker compose exec -u root artifactory bash -c 'cat /var/opt/jfrog/artifactory/log/tomcat/tomcat-*.log'
 services:
   artifactory:
-    image: releases-docker.jfrog.io/jfrog/artifactory-oss:7.117.19
+    image: releases-docker.jfrog.io/jfrog/artifactory-oss:7.125.11
     ports:
       - 8082:8082
     environment:
       - ENABLE_MIGRATION=y
+      - JF_JFCONNECT_ENABLED=n
       - JF_SHARED_DATABASE_TYPE=postgresql
       - JF_SHARED_DATABASE_USERNAME=artifactory
       - JF_SHARED_DATABASE_PASSWORD=password
