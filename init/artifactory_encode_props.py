@@ -36,8 +36,8 @@ def artifactory_encode_props(args: list[str]) -> str:
     #    the url has a maximum length of about 5k characters.
     # NB the UI (but not the API) trims the leading and trailing spaces from the
     #    values.
-    # see https://jfrog.com/help/r/jfrog-rest-apis/set-item-properties
-    # see https://jfrog.com/help/r/jfrog-artifactory-documentation/using-properties-in-deployment-and-resolution
+    # see https://docs.jfrog.com/artifactory/reference/setItemProperties
+    # see https://docs.jfrog.com/artifactory/docs/jfrog-properties
 
     props = defaultdict(list)
 
