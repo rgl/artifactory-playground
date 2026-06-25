@@ -1,7 +1,7 @@
-# syntax=docker.io/docker/dockerfile:1.23
+# syntax=docker.io/docker/dockerfile:1.25
 
 # see https://github.com/jfrog/jfrog-cli/releases
-FROM releases-docker.jfrog.io/jfrog/jfrog-cli-v2-jf:2.103.0
+FROM releases-docker.jfrog.io/jfrog/jfrog-cli-v2-jf:2.109.0
 
 RUN apk add --no-cache python3
 
